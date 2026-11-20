@@ -1,0 +1,10 @@
+# Versions are pinned to the Google Colab runtime the team trains on.
+# TODO (R4): replace each line with name==version from the Colab version check.
+tensorflow
+numpy
+pandas
+scikit-learn
+matplotlib
+pillow
+pyyaml
+kagglehub

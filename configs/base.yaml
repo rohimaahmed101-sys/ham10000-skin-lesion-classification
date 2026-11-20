@@ -1,0 +1,21 @@
+# Reference configuration. Every experiment config copies this file and changes ONE factor.
+project: ham10000-skin-lesion-classification
+seed: 42
+
+data:
+  kaggle_dataset: kmader/skin-cancer-mnist-ham10000
+  image_size: [224, 224]
+  channels: 3
+  classes: [akiec, bcc, bkl, df, mel, nv, vasc]   # alphabetical; this order is the label index 0..6
+  split:            # by lesion_id, stratified by class (spec 3.2)
+    train: 0.70
+    val: 0.15
+    test: 0.15
+
+metrics:
+  primary: macro_f1          # model selection on the validation set
+  secondary: [mel_recall]
+
+paths:                       # relative to the repository root; no absolute paths
+  experiments: experiments
+  models: models
