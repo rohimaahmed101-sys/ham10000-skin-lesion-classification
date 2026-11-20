@@ -1,10 +1,9 @@
-# Versions are pinned to the Google Colab runtime the team trains on.
-# TODO (R4): replace each line with name==version from the Colab version check.
-tensorflow
-numpy
-pandas
-scikit-learn
-matplotlib
-pillow
-pyyaml
-kagglehub
+# Pinned to the Google Colab runtime used by the team (Python 3.13.16, Tesla T4 GPU), 20 Nov 2026.
+tensorflow==2.21.0
+numpy==2.4.6
+pandas==2.2.3
+scikit-learn==1.6.1
+matplotlib==3.10.0
+pillow==11.3.0
+pyyaml==6.0.3
+kagglehub==1.0.3
