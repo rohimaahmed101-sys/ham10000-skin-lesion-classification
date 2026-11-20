@@ -3,7 +3,7 @@
 7-class skin lesion classification on HAM10000 with TensorFlow/Keras: a custom CNN compared with VGG16 / ResNet-50 transfer learning, with lesion-level splits that prevent data leakage, and a full error analysis.
 
 **Course:** AIE231 Neural Networks, Faculty of Computer Science & Engineering, Alamein International University
-**Status:** Phase 1 (topic settled). Training, evaluation and demo commands will be added here as each phase is completed.
+**Status:** Phase 1 complete (dataset checked, training time estimated, versions pinned). Next: Phase 2 — EDA, preprocessing and lesion-level split. Training, evaluation and demo commands will be added here as each phase is completed.
 
 ---
 
@@ -56,6 +56,20 @@ Measured by [`notebooks/00_phase1_dataset_check.ipynb`](notebooks/00_phase1_data
 | Missing metadata | age 57 NaN; sex 57 "unknown"; localization 234 "unknown" |
 | Image size | All 600 × 450 RGB |
 
+### Training-time check (Phase 1, estimate)
+
+Measured by [`notebooks/00b_training_time_check.ipynb`](notebooks/00b_training_time_check.ipynb) on a free Colab Tesla T4 (TensorFlow 2.21.0), 224 × 224 images, batch 32. The spec requires one training run to finish in under 30 minutes.
+
+| Model (placeholder for timing) | Estimated 30-epoch run | Max epochs in 30 min |
+|---|---|---|
+| A Custom CNN | 6.4 min | 167 |
+| B ResNet-50 frozen | 16.9 min | 53 |
+| C ResNet-50 fine-tune | 21.3 min | 42 |
+| B VGG16 frozen | 19.5 min | 46 |
+| C VGG16 fine-tune | 19.9 min | 45 |
+
+These are estimates from 2 timed epochs on a random timing sample, not the project split; no accuracy from this notebook is used. Real training times are logged per run in `experiments/log.csv`.
+
 ## Data ethics and limitations
 
 HAM10000 is a public, de-identified research dataset; no private or scraped personal data is used. The images were collected at two sites (Vienna, Austria and Queensland, Australia), so the model may not generalise to other populations, skin types or imaging devices. Results describe performance on this dataset only. The model must not be used to diagnose or reassure any real patient.
@@ -67,7 +81,7 @@ HAM10000 is a public, de-identified research dataset; no private or scraped pers
 ```
 ham10000-skin-lesion-classification/
 ├── README.md            problem, results, setup and run instructions
-├── requirements.txt     package versions
+├── requirements.txt     pinned package versions (Colab, Python 3.13)
 ├── configs/             one file per experiment configuration
 ├── data/                download script and README (no raw data in git)
 ├── notebooks/           EDA and results notebooks (they import from src/)
@@ -101,3 +115,6 @@ Training, evaluation and demo commands: *added in later phases.*
 - Every member commits from their own GitHub account.
 - Never commit raw data, the Kaggle token, or `kaggle.json`.
 
+## Use of AI assistants
+
+An AI assistant (Claude) is used as a helper for planning, code drafts and review. Every team member is responsible for understanding and explaining all code in this repository. Details are stated in the report.
