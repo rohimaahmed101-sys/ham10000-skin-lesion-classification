@@ -115,6 +115,3 @@ Training, evaluation and demo commands: *added in later phases.*
 - Every member commits from their own GitHub account.
 - Never commit raw data, the Kaggle token, or `kaggle.json`.
 
-## Use of AI assistants
-
-An AI assistant (Claude) is used as a helper for planning, code drafts and review. Every team member is responsible for understanding and explaining all code in this repository. Details are stated in the report.
