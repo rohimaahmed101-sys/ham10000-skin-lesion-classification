@@ -17,6 +17,10 @@ This uses [`kagglehub`](https://github.com/Kaggle/kagglehub) and needs a Kaggle 
 | `ham10000_images_part_1/`, `ham10000_images_part_2/` — byte-identical copies of the same images | No (each image is loaded once, by `image_id`) |
 | `hmnist_*.csv` — downscaled 28×28 and 8×8 versions | No |
 
+## The project split
+
+`splits/split_v1.csv` is created once by `python -m src.data` (or `notebooks/01_eda.ipynb`) and committed. It lists every image with its lesion, group, label and split (train / val / test). It contains no file paths, so it works on every machine. Never edit or rebuild it in place: a new split would need a new file name (`split_v2.csv`) and invalidates every earlier result.
+
 ## Source and licence
 
 HAM10000, CC BY-NC 4.0. Tschandl, P., Rosendahl, C. & Kittler, H. *Sci. Data* 5, 180161 (2018). https://doi.org/10.1038/sdata.2018.161
