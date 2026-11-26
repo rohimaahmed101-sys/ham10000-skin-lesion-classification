@@ -6,16 +6,31 @@ data:
   kaggle_dataset: kmader/skin-cancer-mnist-ham10000
   image_size: [224, 224]
   channels: 3
+  resize: direct            # direct resize 600x450 -> 224x224 (keeps the whole field of view)
   classes: [akiec, bcc, bkl, df, mel, nv, vasc]   # alphabetical; this order is the label index 0..6
-  split:            # by lesion_id, stratified by class (spec 3.2)
+  split:                    # by lesion group, stratified by class (spec 3.2)
     train: 0.70
     val: 0.15
     test: 0.15
+  split_file: data/splits/split_v1.csv            # committed; every member uses the same split
+
+augmentation:               # training set only (spec 3.2)
+  flip: horizontal_and_vertical
+  rotation: 0.25            # fraction of a full turn: +-90 degrees
+  zoom: 0.10
+  brightness: 0.10
+  contrast: 0.10
+
+imbalance:
+  class_weights: balanced   # computed from the training split only
+
+training:
+  batch_size: 32
 
 metrics:
-  primary: macro_f1          # model selection on the validation set
+  primary: macro_f1         # model selection on the validation set
   secondary: [mel_recall]
 
-paths:                       # relative to the repository root; no absolute paths
+paths:                      # relative to the repository root; no absolute paths
   experiments: experiments
   models: models

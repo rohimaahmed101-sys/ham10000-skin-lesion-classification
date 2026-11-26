@@ -3,7 +3,7 @@
 7-class skin lesion classification on HAM10000 with TensorFlow/Keras: a custom CNN compared with VGG16 / ResNet-50 transfer learning, with lesion-level splits that prevent data leakage, and a full error analysis.
 
 **Course:** AIE231 Neural Networks, Faculty of Computer Science & Engineering, Alamein International University
-**Status:** Phase 1 complete (dataset checked, training time estimated, versions pinned). Next: Phase 2 — EDA, preprocessing and lesion-level split. Training, evaluation and demo commands will be added here as each phase is completed.
+**Status:** Phase 2 in progress — lesion-level split, leakage checks, input pipeline and EDA (`src/data.py`, `notebooks/01_eda.ipynb`). Training, evaluation and demo commands will be added here as each phase is completed.
 
 ---
 
@@ -70,6 +70,37 @@ Measured by [`notebooks/00b_training_time_check.ipynb`](notebooks/00b_training_t
 
 These are estimates from 2 timed epochs on a random timing sample, not the project split; no accuracy from this notebook is used. Real training times are logged per run in `experiments/log.csv`.
 
+### Data split (Phase 2)
+
+- **Unit of splitting:** lesion groups, never single images. A group is one `lesion_id`; lesions that share a byte-identical image would be merged into one group (in HAM10000 both duplicate pairs already share a lesion).
+- **Ratios:** 70 / 15 / 15 (train / val / test) of the groups, stratified by class, seed 42. Image-level shares are close to, not exactly, these ratios.
+- **Saved split:** [`data/splits/split_v1.csv`](data/splits/split_v1.csv) (`image_id, lesion_id, group_id, dx, label, split`). Every member trains on this file; it is never rebuilt without a new version name.
+- **Leakage checks:** every image once; no lesion or group in two splits; identical images in one split; every class in every split. They run every time the split is loaded.
+- **Imbalance:** balanced class weights computed from the training split only.
+- **Augmentation (training split only):** random flip, rotation (±90°), zoom (±10 %), brightness (±10 %), contrast (±10 %).
+- **Input:** direct resize 600 × 450 → 224 × 224; scaling per model family (`/255` for the custom CNN, Keras `preprocess_input` for VGG16 / ResNet-50). The same functions are used at inference time.
+
+Result of `split_v1.csv` (built 26 Nov 2026, all leakage checks passed):
+
+| Class | Train | Val | Test |
+|---|---|---|---|
+| akiec | 233 | 43 | 51 |
+| bcc | 365 | 72 | 77 |
+| bkl | 775 | 167 | 157 |
+| df | 76 | 17 | 22 |
+| mel | 777 | 168 | 168 |
+| nv | 4,730 | 975 | 1,000 |
+| vasc | 98 | 22 | 22 |
+| **Total** | **7,054 (70.43 %)** | **1,464 (14.62 %)** | **1,497 (14.95 %)** |
+
+Each class's share differs by at most 0.92 percentage points between splits. Both byte-identical image pairs belong to the same lesion, so the lesion-level split already keeps them together. Class weights (train only): akiec 4.33, bcc 2.76, bkl 1.30, df 13.26, mel 1.30, nv 0.21, vasc 10.28. Full EDA and the findings → decisions table: [`notebooks/01_eda.ipynb`](notebooks/01_eda.ipynb).
+
+Build or check the split:
+
+```bash
+python -m src.data
+```
+
 ## Data ethics and limitations
 
 HAM10000 is a public, de-identified research dataset; no private or scraped personal data is used. The images were collected at two sites (Vienna, Austria and Queensland, Australia), so the model may not generalise to other populations, skin types or imaging devices. Results describe performance on this dataset only. The model must not be used to diagnose or reassure any real patient.
@@ -83,8 +114,8 @@ ham10000-skin-lesion-classification/
 ├── README.md            problem, results, setup and run instructions
 ├── requirements.txt     pinned package versions (Colab, Python 3.13)
 ├── configs/             one file per experiment configuration
-├── data/                download script and README (no raw data in git)
-├── notebooks/           EDA and results notebooks (they import from src/)
+├── data/                download script, README, splits/split_v1.csv (no raw data in git)
+├── notebooks/           00 dataset check, 00b timing check, 01 EDA (they import from src/)
 ├── src/                 reusable code: data, models, train, evaluate, predict
 ├── experiments/         experiment log (CSV) and saved curves
 ├── models/              final saved model and preprocessing objects
@@ -115,3 +146,6 @@ Training, evaluation and demo commands: *added in later phases.*
 - Every member commits from their own GitHub account.
 - Never commit raw data, the Kaggle token, or `kaggle.json`.
 
+## Use of AI assistants
+
+An AI assistant (Claude) is used as a helper for planning, code drafts and review. Every team member is responsible for understanding and explaining all code in this repository. Details are stated in the report.
