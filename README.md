@@ -3,7 +3,7 @@
 7-class skin lesion classification on HAM10000 with TensorFlow/Keras: a custom CNN compared with VGG16 / ResNet-50 transfer learning, with lesion-level splits that prevent data leakage, and a full error analysis.
 
 **Course:** AIE231 Neural Networks, Faculty of Computer Science & Engineering, Alamein International University
-**Status:** Phase 2 in progress — lesion-level split, leakage checks, input pipeline and EDA (`src/data.py`, `notebooks/01_eda.ipynb`). Training, evaluation and demo commands will be added here as each phase is completed.
+**Status:** Phase 2 complete (lesion-level split, leakage checks, input pipeline, EDA). Phase 3 in progress — baselines (`src/baselines.py`, `notebooks/01b_baselines.ipynb`). Training, evaluation and demo commands will be added here as each phase is completed.
 
 ---
 
@@ -11,11 +11,21 @@
 
 | Name | GitHub | Work package |
 |------|--------|--------------|
-| Rohima Ahmed Ibrahim | [rohimaahmed101-sys](https://github.com/rohimaahmed101-sys) | To be assigned |
-| Shaimaa Kotit | [shaimaakotit-29](https://github.com/shaimaakotit-29) | To be assigned |
-| Doha Mahmoud | [dohaalaraby-lang](https://github.com/dohaalaraby-lang) | To be assigned |
-|Radwa Sabry Saber | [RadwaSabry1](https://github.com/RadwaSabry1) | To be assigned|
+| Rohima Ahmed Ibrahim | [rohimaahmed101-sys](https://github.com/rohimaahmed101-sys) | 1. Tech Lead + 2. Data Engineer |
+| Shaimaa Kotit | [shaimaakotit-29](https://github.com/shaimaakotit-29) | 3. Baseline & Analysis Engineer + 5. Experimentation Engineer |
+| Doha Mahmoud | [dohaalaraby-lang](https://github.com/dohaalaraby-lang) | 4. Model Architect |
+| Radwa Sabry Saber | [RadwaSabry1](https://github.com/RadwaSabry1) | 6. Evaluation & Deployment Engineer |
 
+### Responsibilities
+
+| Member | Owns | Neural-network experiment(s) | Main files |
+|---|---|---|---|
+| Rohima | Repository, integration, merges, final model selection (validation only); data loading, lesion-level split, preprocessing, imbalance handling, augmentation (done in Phases 1–2); assembling the report and slides | Final model with 3 seeds; ablations: class weights on / off, augmentation on / off | `src/data.py`, `configs/`, `report/` |
+| Shaimaa | Both baselines; experiment log; learning curves; learning-rate, batch-size and optimizer studies (SGD, SGD + momentum, Adam) | Model A (custom CNN) compared with the baselines; the tuning studies | `src/baselines.py`, `src/train.py`, `experiments/` |
+| Doha | Architectures of models A, B, C; hand parameter counts checked against `model.summary()`; regularization; manual `tf.GradientTape` training step | Models B and C (VGG16 / ResNet-50 frozen, then fine-tuned); architecture and Dropout ablations | `src/models.py` |
+| Radwa | Test-set evaluation (run once), confusion matrix, ROC / AUC, error analysis of 20+ samples, inference pipeline, demo | The fix proposed for the most common confusion | `src/evaluate.py`, `src/predict.py`, `app/` |
+
+Every member trains at least one neural-network experiment, commits from her own account, writes the report section of her work package, and must be able to explain the whole pipeline in the individual defense. Pull requests are reviewed by a different member (Rohima ↔ Shaimaa, Doha ↔ Radwa).
 
 ---
 
@@ -103,6 +113,21 @@ Build or check the split:
 python -m src.data
 ```
 
+## Baselines (Phase 3)
+
+| Baseline | Definition |
+|---|---|
+| B1 majority class | Always predicts the largest training class (nv); probabilities = training class frequencies |
+| B2 logistic regression | Multinomial logistic regression on 32 × 32 RGB pixels (3,072 features), StandardScaler fitted on train, balanced class weights, C = 1.0 |
+
+Both are fitted on the training split and compared on the **validation** split; the test split is evaluated only once, with the final model (Phase 6). Every run is appended to `experiments/log.csv`; full reports are in `experiments/baselines/`.
+
+```bash
+python -m src.baselines --author "Your Name"
+```
+
+Validation results: *added after the first run.*
+
 ## Data ethics and limitations
 
 HAM10000 is a public, de-identified research dataset; no private or scraped personal data is used. The images were collected at two sites (Vienna, Austria and Queensland, Australia), so the model may not generalise to other populations, skin types or imaging devices. Results describe performance on this dataset only. The model must not be used to diagnose or reassure any real patient.
@@ -117,8 +142,8 @@ ham10000-skin-lesion-classification/
 ├── requirements.txt     pinned package versions (Colab, Python 3.13)
 ├── configs/             one file per experiment configuration
 ├── data/                download script, README, splits/split_v1.csv (no raw data in git)
-├── notebooks/           00 dataset check, 00b timing check, 01 EDA (they import from src/)
-├── src/                 reusable code: data, models, train, evaluate, predict
+├── notebooks/           00 dataset check, 00b timing check, 01 EDA, 01b baselines (they import from src/)
+├── src/                 reusable code: config, data, models, baselines, train, evaluate, predict
 ├── experiments/         experiment log (CSV) and saved curves
 ├── models/              final saved model and preprocessing objects
 ├── app/                 demo application
