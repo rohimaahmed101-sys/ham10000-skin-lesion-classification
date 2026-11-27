@@ -1,0 +1,28 @@
+# Raw data and downloads (never commit the dataset)
+data/raw/
+data/*.zip
+*.csv.zip
+hmnist_*.csv
+
+# Secrets
+kaggle.json
+.env
+*.token
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# Training by-products (keep only the final model in models/)
+models/checkpoints/
+logs/
+*.tmp
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
